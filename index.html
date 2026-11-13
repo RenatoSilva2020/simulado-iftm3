@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado IFTM - 03</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: #1a365d;
+        }
+        .header-info {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border-bottom: 4px solid #e53e3e; /* Cor alterada para indicar nível difícil */
+        }
+        .discipline-section {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #cbd5e0;
+            color: #2b6cb0;
+        }
+        .question-card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .text-box {
+            background-color: #fdf6e3;
+            padding: 15px;
+            border-left: 4px solid #d69e2e;
+            margin-bottom: 15px;
+            font-family: Georgia, serif;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 8px 0;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        .options li:hover {
+            background: #edf2f7;
+        }
+        .options label {
+            display: block;
+            padding: 12px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .options input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 30px;
+        }
+        button:hover {
+            background-color: #c53030;
+        }
+        #result-container {
+            display: none;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 6px solid #38a169;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 1.1em;
+        }
+        .result-item.total {
+            font-size: 1.3em;
+            font-weight: bold;
+            background-color: #f0fff4;
+            padding: 15px;
+            border-radius: 6px;
+            border-bottom: none;
+            margin-bottom: 15px;
+        }
+        
+        /* Novos estilos para o feedback detalhado */
+        .feedback-section {
+            margin-top: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .feedback-header {
+            background-color: #ebf8ff;
+            padding: 10px 15px;
+            font-weight: bold;
+            color: #2b6cb0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .feedback-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .feedback-list li {
+            padding: 15px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .feedback-list li:last-child {
+            border-bottom: none;
+        }
+        .q-correct {
+            border-left: 5px solid #48bb78;
+            background-color: #f0fff4;
+        }
+        .q-incorrect {
+            border-left: 5px solid #f56565;
+            background-color: #fff5f5;
+        }
+        .q-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .q-answer {
+            font-size: 0.9em;
+            color: #4a5568;
+            margin-top: 5px;
+        }
+        .q-correct-answer {
+            font-size: 0.9em;
+            color: #2f855a;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-info">
+        <h1>Simulado IFTM - 03</h1>
+        <p>Conteúdos baseados no Edital 2027/1. Leia todas as questões com bastante atenção. Ao finalizar esse simulado, o sitema te fornecerá um resumo do seu desempenho por disciplina. Bons estudos!</p>
+    </div>
+    
+    <form id="quizForm">
+        <div id="quizContainer"></div>
+        <button type="button" onclick="calculateResults()">Finalizar e Ver Resultados</button>
+    </form>
+
+    <div id="result-container">
+        <h2>Seu Desempenho</h2>
+        <div id="resultsList"></div>
+        <div id="detailedFeedback"></div>
+        <button style="background-color: #3182ce;" onclick="location.reload()">Refazer Simulado</button>
+    </div>
+
+    <script>
+        const questionsData = [
+            // ================= LÍNGUA PORTUGUESA =================
+            {
+                discipline: "Língua Portuguesa",
+                text: "Assinale a alternativa em que o uso do acento indicativo de crase está <strong>correto</strong>, de acordo com a norma-padrão:",
+                options: [
+                    { text: "O aluno entregou o relatório à partir das 14 horas.", isCorrect: false },
+                    { text: "Devido à forte chuva, o evento foi adiado para amanhã.", isCorrect: true },
+                    { text: "Ele se referiu à pessoas que não estavam presentes na reunião.", isCorrect: false },
+                    { text: "Aquele professor ensina à distância há mais de cinco anos.", isCorrect: false },
+                    { text: "Estávamos dispostos à colaborar com o novo projeto da escola.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Língua Portuguesa",
+                text: "<div class='text-box'>A velha senhora olhava pela janela o vai e vem dos carros. O mundo parecia ter acelerado, deixando-a para trás como uma âncora esquecida no fundo do mar. Apesar disso, um sorriso leve desenhava-se em seu rosto; a lentidão, afinal, lhe permitia notar detalhes que os apressados jamais veriam.</div><br>Em relação aos elementos de coesão do texto, o pronome oblíquo '-a' em 'deixando-<strong>a</strong>' refere-se:",
+                options: [
+                    { text: "Ao vai e vem dos carros.", isCorrect: false },
+                    { text: "À velha senhora.", isCorrect: true },
+                    { text: "À janela.", isCorrect: false },
+                    { text: "À âncora esquecida.", isCorrect: false },
+                    { text: "À lentidão do mundo.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Língua Portuguesa",
+                text: "Na oração '<strong>Vende-se</strong> casas de veraneio nesta imobiliária', há um erro de concordância verbal muito comum na linguagem coloquial. A forma correta segundo a norma-padrão e a justificativa para essa correção são, respectivamente:",
+                options: [
+                    { text: "'Vendem-se', pois 'casas de veraneio' é o sujeito da oração passiva sintética.", isCorrect: true },
+                    { text: "'Vendem-se', pois o verbo deve concordar com o pronome 'se', que indica pluralidade.", isCorrect: false },
+                    { text: "'Vende-se', a frase original está correta pois 'casas' é objeto direto e não altera o verbo.", isCorrect: false },
+                    { text: "'Vende-se', porque o verbo vender é impessoal neste contexto e deve ficar no singular.", isCorrect: false },
+                    { text: "'Venderam-se', pois a ação já foi concluída no passado.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Língua Portuguesa",
+                text: "Leia o período: '<strong>Como</strong> choveu torrencialmente durante toda a madrugada, as vias de acesso à escola amanheceram alagadas.'<br>A conjunção destacada introduz uma oração subordinada com valor semântico de:",
+                options: [
+                    { text: "Comparação.", isCorrect: false },
+                    { text: "Conformidade.", isCorrect: false },
+                    { text: "Causa.", isCorrect: true },
+                    { text: "Condição.", isCorrect: false },
+                    { text: "Consequência.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Língua Portuguesa",
+                text: "O mesmo vocábulo pode assumir diferentes classes gramaticais dependendo do contexto. Assinale a alternativa em que a palavra destacada funciona como <strong>advérbio</strong>:",
+                options: [
+                    { text: "O aluno comprou <strong>meio</strong> quilo de carne para o churrasco.", isCorrect: false },
+                    { text: "A aluna parecia <strong>meio</strong> confusa com as explicações de matemática.", isCorrect: true },
+                    { text: "Encontramos o <strong>meio</strong> mais rápido de resolver esse conflito.", isCorrect: false },
+                    { text: "No <strong>meio</strong> da rua, havia um grande buraco.", isCorrect: false },
+                    { text: "As duas turmas comeram uma pizza e <strong>meia</strong>.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Língua Portuguesa",
+                text: "A respeito do uso da vírgula, analise a frase: 'Os candidatos que chegaram atrasados, não puderam realizar a prova.'<br>Do ponto de vista normativo, a vírgula empregada nessa frase está:",
+                options: [
+                    { text: "Correta, pois separa uma oração subordinada adjetiva explicativa.", isCorrect: false },
+                    { text: "Incorreta, pois separa injustificadamente o sujeito ('Os candidatos que chegaram atrasados') do seu predicado.", isCorrect: true },
+                    { text: "Correta, pois indica uma pausa necessária para a respiração durante a leitura.", isCorrect: false },
+                    { text: "Incorreta, pois deveria haver uma vírgula também após 'candidatos'.", isCorrect: false },
+                    { text: "Correta, pois isola um adjunto adverbial de tempo deslocado.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Língua Portuguesa",
+                text: "<div class='text-box'>A tecnologia aproximou os que estavam longe, mas distanciou tragicamente os que estão perto. É comum vermos mesas de famílias onde os rostos são iluminados apenas pelo brilho das telas.</div><br>Qual é a figura de linguagem predominante na primeira frase do texto?",
+                options: [
+                    { text: "Eufemismo.", isCorrect: false },
+                    { text: "Metáfora.", isCorrect: false },
+                    { text: "Pleonasmo.", isCorrect: false },
+                    { text: "Antítese.", isCorrect: true },
+                    { text: "Personificação.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Língua Portuguesa",
+                text: "Observe a regência verbal nas frases abaixo. Assinale aquela que obedece rigorosamente às regras da gramática normativa:",
+                options: [
+                    { text: "Eu assisti o filme que ganhou o Oscar ontem à noite.", isCorrect: false },
+                    { text: "O funcionário aspirava a um cargo de diretoria na empresa.", isCorrect: true },
+                    { text: "Nós fomos no cinema após o término das aulas.", isCorrect: false },
+                    { text: "A mãe preferia muito mais doces do que salgados.", isCorrect: false },
+                    { text: "O documento implicará em novas multas para a construtora.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Língua Portuguesa",
+                text: "Identifique no fragmento a seguir uma informação <strong>explícita</strong>:<br>'Embora as energias renováveis correspondam a 80% da matriz elétrica brasileira, o país ainda sofre com apagões em períodos de seca extrema, já que a base do sistema são as usinas hidrelétricas.'",
+                options: [
+                    { text: "O Brasil deveria investir exclusivamente em energia solar e eólica.", isCorrect: false },
+                    { text: "As secas extremas no Brasil são causadas pelo desmatamento global.", isCorrect: false },
+                    { text: "A maior parte da energia elétrica do Brasil provém de fontes renováveis.", isCorrect: true },
+                    { text: "O governo brasileiro negligencia a manutenção das usinas hidrelétricas.", isCorrect: false },
+                    { text: "Os apagões só ocorrem nas regiões mais quentes do país.", isCorrect: false }
+                ]
+            },
+
+            // ================= MATEMÁTICA =================
+            {
+                discipline: "Matemática",
+                text: "Regra de três composta: Uma empreiteira contratou 12 operários para asfaltar 300 metros de uma rua em 5 dias, trabalhando 8 horas por dia. Se a empresa quiser asfaltar 450 metros dessa mesma rua em 4 dias, mas os operários trabalharem 10 horas por dia, quantos operários no total serão necessários?",
+                options: [
+                    { text: "12 operários.", isCorrect: false },
+                    { text: "14 operários.", isCorrect: false },
+                    { text: "15 operários.", isCorrect: false },
+                    { text: "18 operários.", isCorrect: true },
+                    { text: "20 operários.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Matemática",
+                text: "Um capital de R$ 2.000,00 foi aplicado a juros simples durante 8 meses, rendendo um montante total (capital + juros) de R$ 2.320,00. Qual foi a taxa de juros mensal dessa aplicação?",
+                options: [
+                    { text: "1,5% ao mês.", isCorrect: false },
+                    { text: "2,0% ao mês.", isCorrect: true },
+                    { text: "2,5% ao mês.", isCorrect: false },
+                    { text: "3,0% ao mês.", isCorrect: false },
+                    { text: "4,0% ao mês.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Matemática",
+                text: "Uma piscina tem o formato de um paralelepípedo reto-retângulo com dimensões: 8 metros de comprimento, 5 metros de largura e 1,5 metros de profundidade. Se a piscina estiver com água até atingir 80% de sua altura total, quantos <strong>litros</strong> de água há nela? (Lembre-se: 1 m³ = 1.000 litros)",
+                options: [
+                    { text: "48.000 litros.", isCorrect: true },
+                    { text: "50.000 litros.", isCorrect: false },
+                    { text: "60.000 litros.", isCorrect: false },
+                    { text: "80.000 litros.", isCorrect: false },
+                    { text: "96.000 litros.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Matemática",
+                text: "O dono de uma loja aumentou o preço de um produto em 20%. Um mês depois, devido à baixa saída, decidiu dar um desconto de 20% sobre o novo preço. Comparando o preço final após o desconto com o preço original antes do aumento, pode-se afirmar que o preço final:",
+                options: [
+                    { text: "Retornou exatamente ao valor original.", isCorrect: false },
+                    { text: "Ficou 4% maior que o original.", isCorrect: false },
+                    { text: "Ficou 4% menor que o original.", isCorrect: true },
+                    { text: "Ficou 2% menor que o original.", isCorrect: false },
+                    { text: "Ficou 5% maior que o original.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Matemática",
+                text: "Em um estacionamento há carros (4 rodas) e motos (2 rodas), totalizando 45 veículos. Contando-se as rodas de todos os veículos, encontrou-se um total de 130 rodas. A diferença entre o número de carros e o número de motos nesse estacionamento é:",
+                options: [
+                    { text: "5", isCorrect: true },
+                    { text: "10", isCorrect: false },
+                    { text: "15", isCorrect: false },
+                    { text: "20", isCorrect: false },
+                    { text: "25", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Matemática",
+                text: "O perímetro de um retângulo mede 36 cm. A razão entre a sua largura e o seu comprimento é de 1/2 (um meio). Qual é a área desse retângulo?",
+                options: [
+                    { text: "18 cm²", isCorrect: false },
+                    { text: "32 cm²", isCorrect: false },
+                    { text: "72 cm²", isCorrect: true },
+                    { text: "108 cm²", isCorrect: false },
+                    { text: "144 cm²", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Matemática",
+                text: "Um ciclista completou um percurso da seguinte maneira: na primeira hora, percorreu 1/3 do trajeto total. Na segunda hora, percorreu 2/5 do que RESTAVA. Se para finalizar o trajeto ainda faltam 24 km, qual é a distância total do percurso?",
+                options: [
+                    { text: "40 km", isCorrect: false },
+                    { text: "60 km", isCorrect: true },
+                    { text: "80 km", isCorrect: false },
+                    { text: "100 km", isCorrect: false },
+                    { text: "120 km", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Matemática",
+                text: "A média aritmética das idades de 4 amigos é 15 anos. Se um quinto amigo, que tem 20 anos, se juntar ao grupo, qual será a nova média aritmética das idades dos 5 amigos?",
+                options: [
+                    { text: "15 anos.", isCorrect: false },
+                    { text: "16 anos.", isCorrect: true },
+                    { text: "17 anos.", isCorrect: false },
+                    { text: "17,5 anos.", isCorrect: false },
+                    { text: "18 anos.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Matemática",
+                text: "Simplificando a expressão algébrica <strong>(x + y)² - (x - y)²</strong>, obtemos como resultado final:",
+                options: [
+                    { text: "0", isCorrect: false },
+                    { text: "2x² + 2y²", isCorrect: false },
+                    { text: "4xy", isCorrect: true },
+                    { text: "2xy", isCorrect: false },
+                    { text: "x² - y²", isCorrect: false }
+                ]
+            },
+
+            // ================= CIÊNCIAS =================
+            {
+                discipline: "Ciências",
+                text: "O corpo humano regula o nível de glicose (açúcar) no sangue através da ação de hormônios. Quando comemos carboidratos, o nível de glicose sobe e o pâncreas libera um hormônio para fazer as células absorverem essa glicose. Em contrapartida, quando estamos em jejum, outro hormônio é liberado para elevar os níveis de açúcar no sangue. Esses dois hormônios são, respectivamente:",
+                options: [
+                    { text: "Adrenalina e Cortisol.", isCorrect: false },
+                    { text: "Insulina e Glucagon.", isCorrect: true },
+                    { text: "Testosterona e Estrogênio.", isCorrect: false },
+                    { text: "Tiroxina e Melatonina.", isCorrect: false },
+                    { text: "Insulina e Adrenalina.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Ciências",
+                text: "Em um ecossistema aquático altamente poluído por metais pesados (como o mercúrio), observa-se o fenômeno da <strong>magnificação trófica</strong> (ou bioacumulação). Isso significa que, na cadeia alimentar local formada por (Fitoplâncton -> Zooplâncton -> Peixes pequenos -> Peixes grandes -> Aves aquáticas), a maior concentração de mercúrio por quilo de massa corporal será encontrada:",
+                options: [
+                    { text: "No fitoplâncton, por ser a base da cadeia alimentar e absorver o poluente primeiro.", isCorrect: false },
+                    { text: "No zooplâncton e nos peixes pequenos, que formam a maior biomassa do ambiente.", isCorrect: false },
+                    { text: "Diluída igualmente entre todos os níveis tróficos do ecossistema.", isCorrect: false },
+                    { text: "Nos peixes grandes, pois eles purificam a água do ambiente.", isCorrect: false },
+                    { text: "Nas aves aquáticas, por ocuparem o topo dessa cadeia alimentar e acumularem as toxinas dos níveis anteriores.", isCorrect: true }
+                ]
+            },
+            {
+                discipline: "Ciências",
+                text: "Para separar uma mistura homogênea de água e sal de cozinha (cloreto de sódio), obtendo <strong>tanto a água pura quanto o sal sólido</strong> ao final do processo, o método laboratorial mais adequado é a:",
+                options: [
+                    { text: "Filtração simples.", isCorrect: false },
+                    { text: "Decantação.", isCorrect: false },
+                    { text: "Destilação simples.", isCorrect: true },
+                    { text: "Centrifugação.", isCorrect: false },
+                    { text: "Separação magnética.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Ciências",
+                text: "Ao jogar uma bola de basquete verticalmente para cima, no exato ponto mais alto de sua trajetória (antes de começar a cair), desconsiderando a resistência do ar, podemos afirmar sobre sua energia que:",
+                options: [
+                    { text: "Sua energia cinética é máxima e a potencial gravitacional é nula.", isCorrect: false },
+                    { text: "Sua energia cinética é nula e sua energia potencial gravitacional atinge o valor máximo.", isCorrect: true },
+                    { text: "Ambas as energias (cinética e potencial) são nulas, pois a bola está parada.", isCorrect: false },
+                    { text: "A energia térmica da bola se transforma em potencial gravitacional.", isCorrect: false },
+                    { text: "Sua velocidade máxima gera um aumento contínuo na energia cinética durante a queda.", isCorrect: false }
+                ]
+            },
+
+            // ================= HISTÓRIA =================
+            {
+                discipline: "História",
+                text: "Durante o Segundo Reinado no Brasil, a Lei Eusébio de Queirós (1850) representou um marco nas políticas sobre a escravidão, pois:",
+                options: [
+                    { text: "Libertou imediatamente todos os escravizados nascidos a partir daquela data, enfraquecendo as fazendas de café.", isCorrect: false },
+                    { text: "Extinguiu definitivamente o tráfico negreiro internacional para o Brasil, encarecendo a mão de obra e estimulando o tráfico interno.", isCorrect: true },
+                    { text: "Proibiu que escravizados trabalhassem nas minas de ouro, transferindo-os compulsoriamente para as lavouras paulistas.", isCorrect: false },
+                    { text: "Aboliu a escravidão no país de forma gradual, indenizando os senhores de engenho no Nordeste.", isCorrect: false },
+                    { text: "Concedeu cidadania política aos escravizados libertos, permitindo que votassem nas eleições censitárias.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "História",
+                text: "A implantação do <strong>Estado Novo</strong> por Getúlio Vargas, a partir de 1937, caracterizou-se pela:",
+                options: [
+                    { text: "Descentralização do poder para os governos estaduais e fortalecimento do federalismo.", isCorrect: false },
+                    { text: "Ampliação da liberdade de imprensa e criação de diversos partidos políticos novos.", isCorrect: false },
+                    { text: "Outorga de uma constituição autoritária (a 'Polaca'), fechamento do Congresso Nacional e censura prévia.", isCorrect: true },
+                    { text: "Adoção de um modelo econômico estritamente liberal, vendendo estatais para o capital estrangeiro.", isCorrect: false },
+                    { text: "Aliança irrestrita e submissa ao Partido Comunista Brasileiro (PCB) liderado por Luís Carlos Prestes.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "História",
+                text: "O Ato Institucional Nº 5 (AI-5), decretado em dezembro de 1968, é considerado o momento mais duro da Ditadura Civil-Militar brasileira porque:",
+                options: [
+                    { text: "Concedeu poderes excepcionais ao presidente, suspendendo garantias constitucionais como o habeas corpus para crimes políticos.", isCorrect: true },
+                    { text: "Declarou guerra aberta contra os Estados Unidos e instaurou uma economia planificada de modelo soviético.", isCorrect: false },
+                    { text: "Estabeleceu a eleição direta para presidente da república, mas proibiu a participação de mulheres e analfabetos.", isCorrect: false },
+                    { text: "Criou o 'Milagre Econômico', garantindo distribuição igualitária de renda para a classe trabalhadora urbana.", isCorrect: false },
+                    { text: "Anistiou todos os presos políticos exilados, marcando o início da redemocratização pacífica.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "História",
+                text: "A Constituição Federal de 1988 consagrou amplos direitos sociais aos povos indígenas e comunidades quilombolas, especificamente garantindo-lhes:",
+                options: [
+                    { text: "O direito à demarcação e posse de suas terras tradicionais, essenciais para a preservação de suas culturas.", isCorrect: true },
+                    { text: "A obrigação de se integrarem aos centros urbanos para receberem benefícios assistenciais do governo federal.", isCorrect: false },
+                    { text: "A criação de estados independentes dentro do território nacional, com exércitos e leis próprias.", isCorrect: false },
+                    { text: "A isenção total e perpétua de qualquer lei penal brasileira, sujeitando-os apenas a tribunais internacionais.", isCorrect: false },
+                    { text: "O direito de venderem as terras demarcadas para mineradoras multinacionais estrangeiras sem interferência do Estado.", isCorrect: false }
+                ]
+            },
+
+            // ================= GEOGRAFIA =================
+            {
+                discipline: "Geografia",
+                text: "Um mapa tem escala gráfica em que um segmento de reta de 1 cm equivale a 50 km no terreno real. Se a distância em linha reta entre duas capitais nesse mapa é de 12 cm, essa distância real expressa em <strong>metros</strong> será de:",
+                options: [
+                    { text: "6.000 metros.", isCorrect: false },
+                    { text: "60.000 metros.", isCorrect: false },
+                    { text: "600.000 metros.", isCorrect: true }, // 12 * 50 = 600 km -> 600.000 m
+                    { text: "6.000.000 metros.", isCorrect: false },
+                    { text: "60.000.000 metros.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Geografia",
+                text: "O processo de <strong>desconcentração industrial</strong> no Brasil, ocorrido de forma mais intensa a partir da década de 1990, caracterizou-se por:",
+                options: [
+                    { text: "Transferência das indústrias das cidades médias e pequenas do Nordeste para as grandes capitais do Sudeste.", isCorrect: false },
+                    { text: "Fuga de indústrias tradicionais da Região Metropolitana de São Paulo para o interior paulista, outras regiões brasileiras e até outros países, em busca de menores custos (Guerra Fiscal).", isCorrect: true },
+                    { text: "Foco absoluto de novas indústrias na região Norte, visando exclusivamente a preservação sustentável da Floresta Amazônica.", isCorrect: false },
+                    { text: "Estatização massiva das indústrias de bens de consumo, concentrando-as todas sob controle do governo em Brasília.", isCorrect: false },
+                    { text: "Fim da atividade agropecuária no Centro-Oeste, substituída integralmente pela indústria automobilística.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Geografia",
+                text: "O Cerrado é conhecido como a 'caixa d'água do Brasil' por abrigar as nascentes de importantes bacias hidrográficas. No entanto, é um dos biomas mais ameaçados do país devido principalmente:",
+                options: [
+                    { text: "Ao avanço do extrativismo mineral artesanal e garimpo costeiro.", isCorrect: false },
+                    { text: "Ao intenso desmatamento causado pelo aquecimento global natural.", isCorrect: false },
+                    { text: "À expansão da fronteira agrícola, voltada sobretudo para a monocultura de soja e formação de pastagens.", isCorrect: true },
+                    { text: "À intensa urbanização verticalizada que criou as maiores megalópoles do país no centro de Goiás.", isCorrect: false },
+                    { text: "À plantação em larga escala de seringueiras para extração de látex, típica da região.", isCorrect: false }
+                ]
+            },
+            {
+                discipline: "Geografia",
+                text: "A chamada <strong>Transição Demográfica</strong> brasileira indica mudanças significativas no perfil da nossa população nas últimas décadas. A fase atual dessa transição no Brasil evidencia:",
+                options: [
+                    { text: "Altas taxas de natalidade e mortalidade, resultando num crescimento populacional acelerado (explosão demográfica).", isCorrect: false },
+                    { text: "Queda na taxa de mortalidade acompanhada de um aumento expressivo na taxa de fecundidade feminina nas capitais.", isCorrect: false },
+                    { text: "Uma expressiva redução das taxas de natalidade e aumento da expectativa de vida, ocasionando o envelhecimento populacional.", isCorrect: true },
+                    { text: "Uma estabilização demográfica forçada pelo governo através de leis de restrição do número de filhos, similar ao caso chinês.", isCorrect: false },
+                    { text: "O aumento acentuado da mortalidade infantil no Sul do Brasil, reduzindo a média de idade do país.", isCorrect: false }
+                ]
+            }
+        ];
+
+        const disciplineOrder = ["Língua Portuguesa", "Matemática", "Ciências", "História", "Geografia"];
+
+        // Função para embaralhar um array
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
+            }
+            return array;
+        }
+
+        let orderedAndShuffledQuestions = [];
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = ""; 
+            orderedAndShuffledQuestions = []; 
+
+            let globalQuestionIndex = 1;
+
+            disciplineOrder.forEach(disciplineName => {
+                let questionsOfDiscipline = questionsData.filter(q => q.discipline === disciplineName);
+                
+                // Embaralha as questões APENAS dentro de sua disciplina
+                questionsOfDiscipline = shuffleArray(questionsOfDiscipline);
+
+                if(questionsOfDiscipline.length > 0) {
+                    let sectionTitle = document.createElement('h2');
+                    sectionTitle.className = 'discipline-section';
+                    sectionTitle.innerText = disciplineName;
+                    container.appendChild(sectionTitle);
+
+                    questionsOfDiscipline.forEach(q => {
+                        // Salva o número de exibição para recuperar depois
+                        q.displayNumber = globalQuestionIndex;
+                        orderedAndShuffledQuestions.push(q);
+                        
+                        let shuffledOptions = shuffleArray([...q.options]);
+
+                        let qDiv = document.createElement('div');
+                        qDiv.className = 'question-card';
+                        
+                        let questionHTML = `
+                            <h3>Questão ${globalQuestionIndex}</h3>
+                            <p>${q.text}</p>
+                            <ul class="options">
+                        `;
+
+                        shuffledOptions.forEach(opt => {
+                            // Uso do escape para evitar quebrar o HTML caso haja aspas
+                            let safeText = opt.text.replace(/"/g, '&quot;');
+                            questionHTML += `
+                                <li>
+                                    <label>
+                                        <input type="radio" name="q${globalQuestionIndex}" value="${opt.isCorrect}" required>
+                                        ${opt.text}
+                                    </label>
+                                </li>
+                            `;
+                        });
+
+                        questionHTML += `</ul>`;
+                        qDiv.innerHTML = questionHTML;
+                        container.appendChild(qDiv);
+                        
+                        globalQuestionIndex++;
+                    });
+                }
+            });
+        }
+
+        function calculateResults() {
+            const form = document.getElementById('quizForm');
+            const formData = new FormData(form);
+            
+            let answersCount = 0;
+            for(let key of formData.keys()) {
+                answersCount++;
+            }
+
+            if(answersCount < orderedAndShuffledQuestions.length) {
+                alert("Por favor, responda a todas as questões antes de finalizar o simulado.");
+                return;
+            }
+
+            let scores = {};
+            disciplineOrder.forEach(d => {
+                scores[d] = { correct: 0, total: 0 };
+            });
+
+            let totalCorrect = 0;
+            let totalQuestions = orderedAndShuffledQuestions.length;
+            
+            // Oculta questionário
+            form.style.display = 'none';
+            document.querySelector('.header-info').style.display = 'none';
+            
+            const resultContainer = document.getElementById('result-container');
+            const resultsList = document.getElementById('resultsList');
+            const detailedFeedback = document.getElementById('detailedFeedback');
+            
+            let summaryHtml = `
+                <div class="result-item total">
+                    <span>Acertos Totais:</span>
+                    <span>${totalCorrect} de ${totalQuestions} </span>
+                </div>
+                <h3>Resumo por Disciplina:</h3>
+            `;
+            
+            let feedbackHtml = `<h3>Correção Detalhada das Questões:</h3>`;
+
+            // Avalia e monta a estrutura detalhada por disciplina
+            disciplineOrder.forEach(discipline => {
+                let questionsOfDiscipline = orderedAndShuffledQuestions.filter(q => q.discipline === discipline);
+                
+                if(questionsOfDiscipline.length > 0) {
+                    
+                    feedbackHtml += `
+                    <div class="feedback-section">
+                        <div class="feedback-header">${discipline}</div>
+                        <ul class="feedback-list">
+                    `;
+
+                    questionsOfDiscipline.forEach(q => {
+                        let answerStr = formData.get(`q${q.displayNumber}`);
+                        let isCorrect = answerStr === "true";
+                        
+                        scores[discipline].total += 1;
+                        if(isCorrect) {
+                            scores[discipline].correct += 1;
+                            totalCorrect += 1;
+                        }
+                        
+                        // Busca o texto da resposta correta
+                        let correctAnswerText = q.options.find(o => o.isCorrect).text;
+                        
+                        // Retira caixas de texto do enunciado apenas para exibir o resumo limpo
+                        let cleanText = q.text.replace(/<div class='text-box'>.*?<\/div><br>/g, '');
+                        if(cleanText.length > 100) cleanText = cleanText.substring(0, 100) + '...';
+
+                        let statusClass = isCorrect ? 'q-correct' : 'q-incorrect';
+                        let statusText = isCorrect ? '✅ Você Acertou' : '❌ Você Errou';
+
+                        feedbackHtml += `
+                            <li class="${statusClass}">
+                                <div class="q-title">Questão ${q.displayNumber} - ${statusText}</div>
+                                <div class="q-answer">${cleanText}</div>
+                                ${!isCorrect ? `<div class="q-correct-answer">A resposta correta era: ${correctAnswerText}</div>` : ''}
+                            </li>
+                        `;
+                    });
+                    
+                    feedbackHtml += `</ul></div>`;
+                }
+            });
+
+            // Atualiza a porcentagem final no resumo
+            summaryHtml = `
+                <div class="result-item total">
+                    <span>Acertos Totais:</span>
+                    <span>${totalCorrect} de ${totalQuestions} (${Math.round((totalCorrect/totalQuestions)*100)}%)</span>
+                </div>
+                <h3>Resumo por Disciplina:</h3>
+            `;
+
+            disciplineOrder.forEach(discipline => {
+                let data = scores[discipline];
+                if(data.total > 0) {
+                    let percentage = Math.round((data.correct / data.total) * 100);
+                    let color = percentage >= 60 ? 'green' : (percentage >= 40 ? 'orange' : 'red');
+                    summaryHtml += `
+                        <div class="result-item">
+                            <span><strong>${discipline}</strong></span>
+                            <span>
+                                ${data.correct} / ${data.total} 
+                                <span style="color:${color}; font-weight:bold; margin-left: 10px;">(${percentage}%)</span>
+                            </span>
+                        </div>
+                    `;
+                }
+            });
+
+            resultsList.innerHTML = summaryHtml;
+            detailedFeedback.innerHTML = feedbackHtml;
+            resultContainer.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // Garante que o script carrega perfeitamente após a publicação da página
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', renderQuiz);
+        } else {
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>
